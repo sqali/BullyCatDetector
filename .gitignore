@@ -1,0 +1,8 @@
+*.env
+*.jpg
+*.png
+*.jpeg
+*.npy
+*.mp4
+*.cover
+*.csv
