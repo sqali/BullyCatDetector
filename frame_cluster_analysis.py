@@ -163,28 +163,34 @@ def logistic_regression_training():
     plt.figure(figsize=(10, 6))
     plt.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap='viridis', edgecolor='k', s=80, label='Training Data')
     
-    # Plot decision boundary
-    x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
-    y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
-
-    # Adjust grid resolution to avoid memory overflow
-    resolution = 3  # Step size for the grid
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, resolution), np.arange(y_min, y_max, resolution))
+    # Logistic regression coefficients
+    beta_0 = model.intercept_[0]
+    beta_1, beta_2 = model.coef_[0]
     
-    # Predict grid points
-    grid_points = np.c_[xx.ravel(), yy.ravel()]
-    Z = model.predict(grid_points)
-    Z = Z.reshape(xx.shape)
+    # Define x1 range based on data range with margin
+    x1_min, x1_max = X[:, 0].min(), X[:, 0].max()
+    x1_margin = (x1_max - x1_min) * 0.2
+    x1_range = np.linspace(x1_min - x1_margin, x1_max + x1_margin, 500)
     
-    # Plot decision boundary
-    plt.contourf(xx, yy, Z, alpha=0.3, cmap='viridis')
+    # Calculate x2 (decision boundary) for the logistic regression equation
+    x2_boundary = -(beta_0 + beta_1 * x1_range) / beta_2
     
-    # Label and show plot
+    # Restrict to valid data ranges for plotting
+    x2_min, x2_max = X[:, 1].min(), X[:, 1].max()
+    valid_mask = (x2_boundary >= x2_min) & (x2_boundary <= x2_max)
+    x1_range = x1_range[valid_mask]
+    x2_boundary = x2_boundary[valid_mask]
+    
+    # Plot the decision boundary
+    plt.plot(x1_range, x2_boundary, color='red', label='Decision Boundary')
+    
+    # Add labels and legend
     plt.xlabel('PCA1')
     plt.ylabel('PCA2')
     plt.title('Logistic Regression Decision Boundary and Training Data')
     plt.legend()
     plt.show()
+
 
 def live_prediction():
 
@@ -274,5 +280,5 @@ if __name__ == "__main__":
     #store_pixel_info_with_labels()
     #create_pca()
     #visualize_pca()
-    #logistic_regression_training()
+    logistic_regression_training()
     #live_prediction()
