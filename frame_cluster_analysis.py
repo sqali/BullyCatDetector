@@ -15,6 +15,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import accuracy_score
 from sklearn.inspection import DecisionBoundaryDisplay
+from joblib import dump
 
 # Other third-party imports
 from ultralytics import YOLO
@@ -107,6 +108,10 @@ def create_pca():
     pca_df.to_csv("Dataset/pca_feature_dataset_2d_augmentation.csv", index=False)
     print("PCA feature dataset saved as 'pca_feature_dataset_2d_augmentation.csv'.")
 
+    # Save the PCA model for later use
+    dump(pca, 'Models/pca_model.joblib')  # Save the PCA model as a .joblib file
+    print("PCA model saved as 'pca_model.joblib'.")
+
 
 def visualize_pca():
     """
@@ -180,6 +185,9 @@ def logistic_regression_training():
     valid_mask = (x2_boundary >= x2_min) & (x2_boundary <= x2_max)
     x1_range = x1_range[valid_mask]
     x2_boundary = x2_boundary[valid_mask]
+
+    # Saving the Logistic Regression model for live prediction
+    dump(model, 'Models/logistic_regression_model.joblib')  # Save the Logistic Regression model as a .joblib file
     
     # Plot the decision boundary
     plt.plot(x1_range, x2_boundary, color='red', label='Decision Boundary')
