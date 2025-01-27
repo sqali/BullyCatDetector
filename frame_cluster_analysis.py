@@ -273,14 +273,3 @@ def frame_pipeline():
         count += 1
 
     cv2.destroyAllWindows()
-
-
-if __name__ == "__main__":
-
-    pass
-    #frame_pipeline()
-    #store_pixel_info_with_labels()
-    create_pca()
-    #visualize_pca()
-    logistic_regression_training()
-    #live_prediction()

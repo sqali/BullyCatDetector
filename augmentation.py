@@ -66,5 +66,3 @@ def augment_and_save_images():
                     cv2.imwrite(output_image_path, augmented_image)
 
         print("Augmentation Completed Successfully for folder: ", folder)
-
-augment_and_save_images()
