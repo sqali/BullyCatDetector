@@ -3,6 +3,7 @@ import os
 from datetime import datetime, timedelta
 import threading
 import queue
+import pickle
 
 # Third-party library imports
 import cv2
@@ -17,8 +18,15 @@ from email_notifier import send_email_notification
 load_dotenv()
 rtsp_url = os.getenv("outdoor_camera")
 
-# Initialize YOLO model
+# Initialize YOLO model, Load Logistic Regression model and PCA model
 model = YOLO("yolo11n.pt")
+
+with open('logistic_regression_model.pkl', 'rb') as lr_file:
+    logistic_model = pickle.load(lr_file)
+
+with open('pca_model.pkl', 'rb') as pca_file:
+    pca_model = pickle.load(pca_file)
+
 
 # Create a queue for frames
 frame_queue = queue.Queue(maxsize=10)
@@ -85,8 +93,23 @@ def process_frames():
                         cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (255, 0, 0), 2)
                         cv2.putText(frame, label, (x_min, y_min - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
+                        # Resizing and flattening the image
+                        cropped_frame = frame[y_min:y_max, x_min:x_max]
+                        resized_image = cv2.resize(cropped_frame, (255, 255))
+                        flattened_image = resized_image.flatten()
+
+                        # Apply PCA
+                        reduced_features = pca_model.transform([flattened_image])
+
+                        # Logistic Regression model prediction
+                        prediction = logistic_model.predict(reduced_features)
+                        confidence = logistic_model.predict_proba(reduced_features).max()
+
+                        # Display the prediction and confidence
+                        print(f"Predicted Class: {prediction[0]}, Confidence: {confidence:.2f}")
+
                         # Check if email needs to be sent
-                        send_email_if_needed(frame, score)
+                        send_email_if_needed(frame, confidence)
 
             # Display the annotated frame
             cv2.imshow("Object Detection", frame)

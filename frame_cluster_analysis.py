@@ -12,9 +12,8 @@ import cv2
 # Scikit-learn imports
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-from sklearn.inspection import DecisionBoundaryDisplay
 from joblib import dump
 
 # Other third-party imports
@@ -199,11 +198,6 @@ def logistic_regression_training():
     plt.legend()
     plt.show()
 
-
-def live_prediction():
-
-    pass
-
 # Frame capture thread
 def frame_pipeline():
     video_directory = ["Videos/Grey", "Videos/Orange"]
@@ -286,7 +280,7 @@ if __name__ == "__main__":
     pass
     #frame_pipeline()
     #store_pixel_info_with_labels()
-    #create_pca()
+    create_pca()
     #visualize_pca()
     logistic_regression_training()
     #live_prediction()
