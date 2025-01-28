@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import threading
 import queue
 import pickle
+from joblib import load
 
 # Third-party library imports
 import cv2
@@ -21,12 +22,21 @@ rtsp_url = os.getenv("outdoor_camera")
 # Initialize YOLO model, Load Logistic Regression model and PCA model
 model = YOLO("yolo11n.pt")
 
+# Loading the logistic Regression Model
+logistic_model = load("Models/logistic_regression_model.joblib")
+print("Logistic Regression Model loaded successfully")
+
+# Loading the PCA Model
+pca_model = load("Models/pca_model.joblib")
+print("PCA Model loaded successfully")
+
+"""
 with open('logistic_regression_model.pkl', 'rb') as lr_file:
     logistic_model = pickle.load(lr_file)
 
 with open('pca_model.pkl', 'rb') as pca_file:
     pca_model = pickle.load(pca_file)
-
+"""
 
 # Create a queue for frames
 frame_queue = queue.Queue(maxsize=10)
@@ -37,7 +47,7 @@ email_lock = threading.Lock()  # Ensures thread-safe access to `last_email_time`
 
 # Frame capture thread
 def capture_frames():
-    cap = cv2.VideoCapture("sample_video\FB8132805_1_20250119T063445Z_20250119T063900Z.mp4")
+    cap = cv2.VideoCapture("Videos\F48318325_1_20250116T194305Z_20250116T194505Z.mp4")
     if not cap.isOpened():
         print("Failed to connect to camera.")
         return 
